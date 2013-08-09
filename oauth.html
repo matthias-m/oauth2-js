@@ -9,6 +9,7 @@
         $(function () {
             var extractToken = function (hash) {
                 var match = hash.match(/access_token=(\w+)/);
+                location.hash = '';
                 return !!match && match[1];
             };
 
