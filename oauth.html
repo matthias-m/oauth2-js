@@ -37,7 +37,7 @@
                     }, success: function (response) {
                         var container = $('span.resource');
                         if (response) {
-                            container.text(response.username);
+                            container.text(response);
                         } else {
                             container.text("An error occurred.");
                         }
