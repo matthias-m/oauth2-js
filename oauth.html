@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>OAuth 2 User Agent Authentication Flow Demo</title>
+    <title>OAuth 2 Implicit Grant User Agent Authentication Flow Demo</title>
     <script type="text/javascript" charset="utf-8" src="js/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" charset="utf-8">
         $(function () {
@@ -37,7 +37,7 @@
                     }, success: function (response) {
                         var container = $('span.resource');
                         if (response) {
-                            container.text(response);
+                            container.text("content: '" + JSON.stringify(response) + "'");
                         } else {
                             container.text("An error occurred.");
                         }
@@ -51,7 +51,7 @@
                         "&client_id=" + clientId +
                         "&redirect_uri=" + redirect;
 
-                $("a.connect").attr("href", "javascript:location.href='"+authUrl+"'");
+                $("a.connect").attr("href", authUrl);
             }
         });
     </script>
@@ -69,13 +69,11 @@
 
 <div class="authenticated hidden">
     <p>
-        You are using token
-        <span class="token">[no token]</span>.
+        You are using token <span class="token">[no token]</span>.
     </p>
 
     <p>
-        Resource
-        <span class="resource">[no resource]</span>.
+        Resource <span class="resource">[no resource]</span>.
     </p>
 </div>
 </body>
