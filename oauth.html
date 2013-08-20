@@ -67,13 +67,16 @@
                         } else {
                             container.text("An error occurred.");
                         }
+                    }, error: function (jqXHR, textStatus, errorThrown) {
+                        $('div.errorMSG').show();
+                        $('span.error').text('accessing resource server: (HTTP ' + jqXHR.status + ' ' + errorThrown + ')');
                     }
                 });
 
             } else if (response.error) {
-                $('div.auth_error').show();
+                $('div.errorMSG').show();
 
-                $('span.error').text(response.error);
+                $('span.error').text('Authentication error: ' + response.error);
 
             } else {
                 $('div.authenticate').show();
@@ -114,7 +117,7 @@
         Resource <span class="resource">[no resource]</span>
     </p>
 </div>
-<div class="auth_error hidden">
+<div class="errorMSG hidden">
     <p>
         Error <span class="error">[no error]</span>
     </p>
