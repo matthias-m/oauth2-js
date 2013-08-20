@@ -7,33 +7,58 @@
     <script type="text/javascript" charset="utf-8" src="js/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" charset="utf-8">
         $(function () {
-            var extractToken = function (hash) {
-                var match = hash.match(/access_token=(\w+)/);
-                location.hash = '';
-                return !!match && match[1];
+            var extractResponse = function (location) {
+                var result = {
+                    token: null,
+                    error: null};
+                var tokenMatch = location.hash.match(/access_token=(\w+)/);
+                if (tokenMatch) {
+                    result.token = tokenMatch[1];
+                }
+                var errorMatch = location.search.match(/error=(\w+)/);
+                if (errorMatch) {
+                    result.error = errorMatch[1];
+                }
+                return result;
+            };
+            var cleanLocation = function () {
+                if ('replaceState' in history) {
+                    history.replaceState('', document.title, location.pathname);
+                } else {
+                    location.hash = '';
+                    location.search = '';
+                }
+                return location.href.split('?')[0].split('#')[0];
             };
 
-            //Client-ID 205b0523-7a0a-4218-87e6-755ec1d7bcd1
-            //Client-Secret 77df198f-eef7-44c9-9bb6-be4411574a6f
+            //mm-test-espresso-2
+            //Client-ID 8541142e-b205-4b82-9c79-3a4c4f0f4f96
             //redirect = 'http://localhost/oauth/oauth.html'
 
-            var clientId='205b0523-7a0a-4218-87e6-755ec1d7bcd1';
+            // auth settings
+            var clientId = '8541142e-b205-4b82-9c79-3a4c4f0f4f96';
             var authHost = 'http://authserver-j1bof3861.rhcloud.com/oauth2';
-            var resourceHost = 'http://resourceserver-j1bof3861.rhcloud.com/rest/helloworld';
-            var redirect = location.href;
-
             var endUserAuthorizationEndpoint = authHost + "/authorize";
+            var scope = 'espresso';
+            // resource settings
+            var resourceHost = 'http://resourceserver-j1bof3861.rhcloud.com/rest/coffee';
 
-            var token = extractToken(location.hash);
-            if (token) {
+            // process auth server response
+            var response = extractResponse(location);
+
+            // beautify locationbar and get correct redirect uri
+            var redirect = cleanLocation();
+
+            if (response.token) {
                 $('div.authenticated').show();
 
-                $('span.token').text(token);
+                $('span.token').text(response.token);
 
+                // this requires a CORS enabled browser and server...
                 $.ajax({
                     url: resourceHost,
                     beforeSend: function (xhr) {
-                        xhr.setRequestHeader('Authorization', "Bearer " + token);
+                        xhr.setRequestHeader('Authorization', "Bearer " + response.token);
                         xhr.setRequestHeader('Accept', "application/json");
                     }, success: function (response) {
                         var container = $('span.resource');
@@ -44,21 +69,33 @@
                         }
                     }
                 });
+
+            } else if (response.error) {
+                $('div.auth_error').show();
+
+                $('span.error').text(response.error);
+
             } else {
                 $('div.authenticate').show();
 
                 var authUrl = endUserAuthorizationEndpoint +
                         "?response_type=token" +
                         "&client_id=" + clientId +
-                        "&redirect_uri=" + redirect;
+                        "&redirect_uri=" + redirect +
+                        "&scope=" + scope;
 
                 $("a.connect").attr("href", authUrl);
             }
-        });
+        })
+        ;
     </script>
     <style>
         .hidden {
             display: none;
+        }
+
+        .error {
+            color: red;
         }
     </style>
 </head>
@@ -75,6 +112,11 @@
 
     <p>
         Resource <span class="resource">[no resource]</span>.
+    </p>
+</div>
+<div class="auth_error hidden">
+    <p>
+        Error <span class="error">[no error]</span>.
     </p>
 </div>
 </body>
