@@ -45,26 +45,31 @@
                     var cleanLocation = function (at, client) {
                         if ('replaceState' in history) {
                             var loc = location.pathname;
-                            var separator = false;
                             if (at || client) {
                                 loc += '#';
                             }
-                            if (at) {
-                                loc += 'at=' + at;
-                                separator = true;
-                            }
-                            if (client) {
-                                if (separator) {
-                                    loc += '/'
-                                }
-                                loc += 'client=' + client;
-                            }
+                            loc += getURLHashEncodedParams(at, client);
                             history.replaceState('', document.title, loc);
                         } else {
-                            location.hash = '';
+                            location.hash = getURLHashEncodedParams(at, client);
                             location.search = '';
                         }
                         return location.href.split('?')[0].split('#')[0];
+                    };
+                    var getURLHashEncodedParams = function(at, client) {
+                        var loc = '';
+                        var separator = false;
+                        if (at) {
+                            loc += 'at=' + at;
+                            separator = true;
+                        }
+                        if (client) {
+                            if (separator) {
+                                loc += '/'
+                            }
+                            loc += 'client=' + client;
+                        }
+                        return loc;
                     };
                     var loadResource = function (resourceHost, accessToken, successCallback, errorCallback) {
                         $('#loadResource').button('loading');
