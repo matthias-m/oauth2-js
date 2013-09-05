@@ -110,11 +110,14 @@
 
                     $('#loadResource').click(function (event) {
                         loadResource(resourceHost, response.token, loadResourceSuccess, loadResourceError);
+                        $('#alert').removeClass('alert-danger').text('');
                     });
 
                     //mm-test-espresso-2
                     //Client-ID 8541142e-b205-4b82-9c79-3a4c4f0f4f96
                     //redirect = 'http://localhost/oauth/oauth.html'
+                    // test-2
+                    //2815f74a-17fc-4b92-977e-62a2a0a5d181
 
                     // auth settings (default clientId)
                     var defaultClientId = '8541142e-b205-4b82-9c79-3a4c4f0f4f96';
